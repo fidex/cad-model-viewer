@@ -10,7 +10,7 @@ jQuery(function() {
     	console.log(jQuery(this).attr('rotation'));
 
     	try{
-    		testIt(jQuery(this));
+    		//testIt(jQuery(this));
     	}
     	catch(err){
     		console.log(err);

@@ -1,15 +1,17 @@
 <?php
-	$scene = @$_POST['scene']or die("No data!");
+	//$scene = @$_POST['scene']or die("No data!");
+	$basePath = "../../uploads/cad-model-viewer/";
+	$filename = $_POST['filename']or die("No data!");;	//unlink("newfile.scene");
+	//unlink("newfile.cam");
 
-	if(true){
-		$myfile = fopen("newfile.scene", "w") or die("Unable to open file!");
-		fwrite($myfile, $_POST['scene']);
+	
+		$myfile = fopen($basePath.$filename.".scene", "w") or die("Unable to open file!");
+		fwrite($myfile, $_POST['scene']) or die("error");
 		fclose($myfile);
-	}
-	if(true){
-		$myfile = fopen("newfile.cam", "w") or die("Unable to open file!");		
-		fwrite($myfile, $_POST['cam']);
+
+		$myfile = fopen($basePath.$filename.".cam", "w") or die("Unable to open file!");		
+		fwrite($myfile, $_POST['cam']) or die("error");
 		fclose($myfile);
-	}
+	
 	return;
 ?>

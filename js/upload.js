@@ -1,46 +1,55 @@
+// comments
+
+var media_uploader = null;
+var data_handle;
+
 jQuery(function() {
     
-    jQuery('.upp').click(function(){
-         open_media_uploader_image();
+    data_handle = jQuery('#dataHandle');
+    jQuery('.upp').click( function(){
+         open_media_uploader();
+         console.log(data_handle);
     });
 });
 
-var media_uploader = null;
 
-function open_media_uploader_image()
+
+function open_media_uploader()
 {
+    
     media_uploader = wp.media({
-        frame:    "post", 
-        state:    "insert",
+        titel: "Select or upload a file",
         button: {
-        text: 'Use this media'
+          text: 'Load this file'
         }, 
         multiple: false
     });
-
-    media_uploader.on("insert", function(){
+    //console.log(media_uploader.on());
+    /*media_uploader.on("insert", function(){
         var json = media_uploader.state().get("selection").first().toJSON();
-
-        var image_url = json.url;
-        var image_caption = json.caption;
-        var image_title = json.title;
-    });
+        
+        
+        
+    });*/
     media_uploader.on( 'select', function() {
       
       // Get media attachment details from the frame state
-      var attachment = frame.state().get('selection').first().toJSON();
+      var attachment = media_uploader.state().get('selection').first().toJSON();
+      //console.log(attachment);
+      
 
-      // Send the attachment URL to our custom image input field.
-      imgContainer.append( '<img src="'+attachment.url+'" alt="" style="max-width:100%;"/>' );
+      data_handle.val(JSON.stringify(attachment));  
+      var temp = JSON.parse(JSON.stringify(attachment));
+      if(!temp["url"].match(/fbx$/)){
+        alert("Please choose a .fbx file");
+        media_uploader.open();
+        return;
+      }
+      
+      data_handle.change(); //fire change function
 
-      // Send the attachment id to our hidden input
-      imgIdInput.val( attachment.id );
 
-      // Hide the add image link
-      addImgLink.addClass( 'hidden' );
-
-      // Unhide the remove image link
-      delImgLink.removeClass( 'hidden' );
+      
     });
 
     media_uploader.open();

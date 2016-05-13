@@ -1,61 +1,131 @@
 jQuery(function() {
-    
     var i = 0;
-    jQuery('#c_reload').click(function(){
-    	//createViewer();
-    	testIt();
+    jQuery('.canvas').each(function(){
+    	console.log(i+": ");i++;  
+    	
+
+    	try{
+    		sceneReader(jQuery(this));
+    	}
+    	catch(err){
+    		console.log(err);
+    	}
     });
-    
+    //sceneReader();
 
 });
-function testIt(){
-	var container, camera, scene, renderer, mesh,
-
+function sceneReader(c){
+	console.log("begin creating Scene");
+	var basePath = "/wordpress/wp-content/uploads/cad-model-viewer/";
+	var container, camera, scene, renderer, mesh, controls;
+	console.log(c.children("script").text());
+	var sc = jQuery.parseJSON(c.children("script").text());
+	console.log(sc);
     objects = [],
 
-    CANVAS_WIDTH = 400,
-    CANVAS_HEIGHT = 400;
+    CANVAS_WIDTH = sc["width"],
+    CANVAS_HEIGHT = sc["height"];
 
-	container = jQuery('#lightTest');
+	container = c;
 	//console.log("rotation: "+container.attr('rotation'))
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.setSize( CANVAS_WIDTH, CANVAS_HEIGHT );
-	renderer.setClearColor( 0xffffff);
+	renderer.setClearColor( sc["bg_color"] );
+	renderer.shadowMap.enabled = true;
+	renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 	container.append( renderer.domElement );
 
 	
-	scene = new THREE.Scene();
 	
-	//camera = new THREE.PerspectiveCamera( 50, CANVAS_WIDTH / CANVAS_HEIGHT, 1, 1000 );
-	//camera.position.y = 150;
-	//camera.position.z = 30;
 	
 
 	
 	var loader = new THREE.ObjectLoader();	
 	
-	loader.load( '/wordpress/wp-content/plugins/cad-model-viewer/newfile.scene', function ( e ) {
+	loader.load( basePath+sc["file"]+".scene", function ( e ) {
 
-		console.log(e);
-        scene = e;
+		
+		scene = e;
+		//scene.children[4].visible =false; //box ausblenden
+
+		var loader = new THREE.FBXLoader();		
+		loader.load( e.children[4].name , function ( object ) {			
+		
+		var ob = new THREE.Object3D();
+		ob.name ="obj";
+		object.traverse( function ( child ) {
+
+			if ( child instanceof THREE.Mesh ) {
+
+				//child.material.map = texture;
+				if(sc["material"]=="lambert"){
+					var objectx = new THREE.Mesh(child.geometry, new THREE.MeshLambertMaterial({color: 0xfcfcfc}));
+				}else if(sc["material"]=="phong"){
+					var objectx = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({color: 0xfcfcfc}));
+				}
+				ob.add( objectx );
+				
+			}			
+			
+		} );
+		ob.traverse( function ( child ) {
+			child.castShadow =true;
+			child.receiveShadow = true;
+		} );
+
+		if(false){ // fix rotation
+		object.rotation.z = 90 * Math.PI/180;
+		object.rotation.x = -90 * Math.PI/180;
+		}
+		//object.rotation.x = e.children[4].rotation.x;
+		//object.rotation.z = e.children[4].rotation.z;
+		//object.position.y = - 95;
+		//console.log(object);
+		scene.add( ob );
+		console.log(scene);
+
+	});
+        //scene.add = e.children[0];        
+        //scene.add = e.children[1];
+        //scene.add = e.children[2];
+        //scene.add = e.children[3];
 
 	} );
 
 	
-	loader.load( '/wordpress/wp-content/plugins/cad-model-viewer/newfile.cam', function ( e ) {
+	loader.load( basePath+sc["file"]+".cam", function ( e ) {
 
 		console.log(e);
         camera = e;
+        controls = new THREE.OrbitControls( camera, renderer.domElement );
+	    controls.enableDamping = true;
+	    controls.dampingFactor = 0.15;
+	    controls.rotateSpeed = 0.15;
+	    controls.enableZoom = false; 
+	    controls.autoRotate = true;	
+	    controls.autoRotateSpeed = sc["cam_rotation_speed"]/100;       
+	    console.log(controls);
 
-	} );
-    
+	} );    
 	
 
 	function render() {
 
-    //mesh.rotation.y += 0.01;
+
+	
+
+    try{
+    	controls.update();
+		
+		scene.getObjectByName("obj").rotation.x += sc["rot_speed_x"]/2000 ;
+		scene.getObjectByName("obj").rotation.y += sc["rot_speed_y"]/2000 ;
+		scene.getObjectByName("obj").rotation.z += sc["rot_speed_z"]/2000 ;		
+
+	}catch(err){
+		//console.log(err);
+	}
     
     renderer.render( scene, camera );
 
