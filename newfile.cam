@@ -1,1 +1,0 @@
-{"metadata":{"version":4.4,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"E5E3FDDD-BB3A-475E-A0A1-4D714EDE9BF6","type":"PerspectiveCamera","matrix":[0.989253044128418,0,-0.1462135910987854,0,0,1,0,0,0.1462135910987854,0,0.989253044128418,0,4.385228157043457,0,29.66960906982422,1],"focalLength":10,"zoom":1,"fov":50,"aspect":1,"near":1,"far":1000}}
