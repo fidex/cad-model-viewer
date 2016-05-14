@@ -114,7 +114,7 @@ function backendPage(){
     ));
 
 
-
+    /*
 	//echo get_home_path()."<br>";
 	$dir    = get_home_path().'wp-content/uploads';
 	$files1 = scandir($dir);
@@ -147,6 +147,7 @@ function backendPage(){
     //    print_r("<li class='filename'>".$f."</li>");
     //}
     //print_r($files);
+    */
     readfile(plugin_dir_url(__FILE__) ."/js/modelViewer.php");
 
 }
