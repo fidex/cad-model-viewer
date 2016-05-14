@@ -1,7 +1,8 @@
 class ModelViewer {
 
     constructor() {
-        this.initializeShortCode();
+        this.initializeShortCode(); 
+        this.createShortcode();
     }
 
     initializeShortCode() {
@@ -26,10 +27,10 @@ class ModelViewer {
     }
     createShortcode() {
 
-        sc = "[foobar ";
+        var sc = "[foobar ";
         //sc+=' scene="'+ JSON.stringify(scene.toJSON()) +'"';
 
-        jQuery.each(shortcode, function(key, value) {
+        jQuery.each(this.shortcode, function(key, value) {
             sc += ' ' + key + '="' + value + '"';
             //console.log(key+" : "+value);
         });
@@ -43,63 +44,7 @@ class ModelViewer {
         //rendstorage = JSON.stringify(renderer.toJSON());
 
     }
-    saveFileToServer() {
-
-        var t = this.scene.clone();
-        t.remove(t.getObjectByName("obj"));
-
-        var storage = JSON.stringify(t.toJSON());
-        var camstorage = JSON.stringify(camera.toJSON());
-        var filename = jQuery("#filename").val();
-
-        jQuery.ajax({
-            type: 'POST',
-            url: "/wordpress/wp-content/plugins/cad-model-viewer/writeFile.php",
-            data: {
-                "filename": filename,
-                "scene": storage,
-                "cam": camstorage
-            },
-            success: function(msg) {
-                //alert(msg);
-                this.shortcode["file"] = filename;
-                this.createShortcode();
-
-            },
-            complete: function() {
-
-            },
-            error: function() {
-
-            }
-        });
-
-    }
-    checkFilename(name) {
-
-        jQuery.ajax({
-            type: 'POST',
-            url: "/wordpress/wp-content/plugins/cad-model-viewer/checkFilename.php",
-            data: {
-                "filename": name
-            },
-            success: function(msg) {
-
-                if (msg == "true") {
-                    alert("filename already taken, please insert a new");
-                    jQuery('#filename').val("");
-                } else {
-                    this.saveFileToServer();
-                }
-
-            },
-            complete: function(msg) {
-
-            },
-            error: function(msg) {}
-        });
-
-    }
+    
 
     createViewer() {
 
@@ -176,63 +121,8 @@ class ModelViewer {
         light2.position.set(0, 0, 30);
         //scene.add( light3 );
 
-
-
-
-        /*
-        var manager = new THREE.LoadingManager();
-	
-        			manager.onProgress = function ( item, loaded, total ) {
-
-        				//console.log( item, loaded, total );
-
-        			};
-        			
-        			var onProgress = function ( xhr ) {
-        				if ( xhr.lengthComputable ) {
-        					var percentComplete = xhr.loaded / xhr.total * 100;
-        					console.log( Math.round(percentComplete, 2) + '% downloaded' );
-        				}
-        			};
-        			manager.onLoad = function( xhr){
-        				console.log("done");
-        			};
-
-        			manager.onError = function ( xhr ) {
-        			};
-	
-        //var loader = new THREE.ImageLoader( manager );
-        //loader.load( '/wordpress/wp-content/uploads/2016/04/building_col_3.jpg', function ( image ) {
-
-        	//texture.image = image;
-        	//texture.needsUpdate = true;
-
-        //} );
-        /*
-        var mtlLoader = new THREE.MTLLoader();
-        			mtlLoader.setBaseUrl( '/wordpress/wp-content/uploads/future/' );
-        			mtlLoader.setPath( '/wordpress/wp-content/uploads/future/' );
-        			mtlLoader.load( 'Futuristic_Apartment.mtl', function( materials ) {
-        				materials.preload();
-        				var objLoader = new THREE.OBJLoader();
-        				objLoader.setMaterials( materials );
-        				objLoader.setPath( '/wordpress/wp-content/uploads/future/' );
-        				objLoader.load( 'Futuristic_Apartment.obj', function ( object ) {
-        					//object.position.y = - 95;
-        					object.castShadow = true;
-        					object.receiveShadow = true;
-        					console.log("OBJ!!!!!");
-        					console.log(object);
-        					scene.add( object );
-        				}, onProgress, onError );
-        			});
-	
-        */
-
-
         var loader = new THREE.FBXLoader();
        
-        //loader.load( '/wordpress/wp-content/plugins/cad-model-viewer/js/ThreeJs/examples/models/fbx/xsi_man_skinning.fbx', function ( object ) {
         loader.load(this.filepath, function(object) {
 
             var ob = new THREE.Object3D();
@@ -241,31 +131,30 @@ class ModelViewer {
 
                 if (child instanceof THREE.Mesh) {
 
-                    if (shortcode["material"] == "lambert") {
+
+                    if (this.shortcode["material"] == "lambert") {
                         var objectx = new THREE.Mesh(child.geometry, new THREE.MeshLambertMaterial({
                             color: 0xfcfcfc
                         }));
-                    } else if (shortcode["material"] == "phong") {
+                    } else if (this.shortcode["material"] == "phong") {
                         var objectx = new THREE.Mesh(child.geometry, new THREE.MeshPhongMaterial({
                             color: 0xfcfcfc
                         }));
                     }
+                    objectx.castShadow = true;
+                    objectx.receiveShadow = true;
                     ob.add(objectx);
 
                 }
 
-            });
-            ob.traverse(function(child) {
-                child.castShadow = true;
-                child.receiveShadow = true;
-            });
-
+            }.bind(this));
 
             ob.name = "obj";
 
             this.bbox = new THREE.BoundingBoxHelper(ob, 0xfff000);
 
             this.scene.add(ob);
+            this.originalRotation = ob.rotation;
             this.bbox.update();
 
             this.zoomCamera(this.bbox);
@@ -290,9 +179,8 @@ class ModelViewer {
         console.log(controls);
         this.controls = controls;
     }
-
+    /*  */
     render() {
-
 
         this.controls.update();
 
@@ -314,7 +202,7 @@ class ModelViewer {
 
 
     }
-
+    /*  */
     animate() {
 
 
@@ -325,9 +213,9 @@ class ModelViewer {
             stats.end();
 
             /*
-		var that = this; // use this, if .bind causes lag
-		requestAnimationFrame( function() { that.animate(); } );
-	*/
+        		var that = this; // use this, if .bind causes lag
+        		requestAnimationFrame( function() { that.animate(); } );
+	       */
             requestAnimationFrame(this.animate.bind(this));
 
         } catch (err) {
@@ -390,27 +278,85 @@ class ModelViewer {
 
         //console.log(scene.getObjectByName("ground"));
     }
-    cameraRotation() {
-        this.controls.autoRotateSpeed = this.shortcode["cam_rotation_speed"] / 100;
+    cameraRotation(speed) {
+        this.shortcode["cam_rotation_speed"] = speed/100
+        this.controls.autoRotateSpeed = speed / 100;
     }
-    changeGroundColor(c) {
-        scene.getObjectByName("ground").material.color = c;
+    changeGroundColor(c) {        
+        this.scene.getObjectByName("ground").material.color = c;
     }
     changeGroundVisibility(bool) {
-        scene.getObjectByName("ground").visible = bool;
+        this.scene.getObjectByName("ground").visible = bool;
     }
     fixAxis() {
-
         this.scene.remove(this.scene.getObjectByName("ground"));
-        ob = this.scene.getObjectByName("obj");
-        //ob.rotation.z = 90 * Math.PI/180;	
-        ob.rotation.x = -90 * Math.PI / 180;
+        var ob = this.scene.getObjectByName("obj");        
+        //ob.rotation.z = 90 * Math.PI/180;
+        ob.rotation.x = -90 * Math.PI / 180;      
+        this.bbox.update();
 
-        ob.rotation.order = "ZXY";
-        //bbox.update();
         this.createGround(this.bbox);
-        this.zoomCamera(this.bbox);
-        //console.log(ob);
+        this.zoomCamera(this.bbox);        
     }
+    resetObject(){
+        ob = this.scene.getObjectByName("obj");
+        ob.rotation = this.originalRotation;
+    }
+    saveFileToServer() {
 
+        var t = this.scene.clone();
+        t.remove(t.getObjectByName("obj"));
+
+        var storage = JSON.stringify(t.toJSON());
+        var camstorage = JSON.stringify(camera.toJSON());
+        var filename = jQuery("#filename").val();
+
+        jQuery.ajax({
+            type: 'POST',
+            url: "/wordpress/wp-content/plugins/cad-model-viewer/writeFile.php",
+            data: {
+                "filename": filename,
+                "scene": storage,
+                "cam": camstorage
+            },
+            success: function(msg) {
+                //alert(msg);
+                this.shortcode["file"] = filename;
+                this.createShortcode();
+
+            },
+            complete: function() {
+
+            },
+            error: function() {
+
+            }
+        });
+
+    }
+    checkFilename(name) {
+
+        jQuery.ajax({
+            type: 'POST',
+            url: "/wordpress/wp-content/plugins/cad-model-viewer/checkFilename.php",
+            data: {
+                "filename": name
+            },
+            success: function(msg) {
+
+                if (msg == "true") {
+                    alert("filename already taken, please insert a new");
+                    jQuery('#filename').val("");
+                } else {
+                    this.saveFileToServer();
+                }
+
+            },
+            complete: function(msg) {
+
+            },
+            error: function(msg) {}
+        });
+
+    }
 }
