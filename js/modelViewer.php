@@ -1,7 +1,4 @@
 <script>
-var rendstorage;
-var storage; 
-var camstorage;
 </script>
 <div id="stats"></div>
 <div>

@@ -1,13 +1,9 @@
-var shortcode = {};
-var container, camera, scene, renderer, mesh, controls, bbox, stats;
-var pos_min, pos_max;
-
-
-//var storage;
-var objects = [];
 jQuery(function() {
 
-	stats = new Stats();	
+	stats = new Stats();
+
+	mv = new ModelViewer();
+
 	
 	var container = jQuery( '#stats' );
 	console.log(stats.dom);
@@ -27,10 +23,10 @@ jQuery(function() {
     jQuery('#dataHandle').change(function(){
     	var temp = JSON.parse(jQuery(this).val());
     	if(temp["url"].match(/fbx$/)){
-    		shortcode["file"] = temp["url"];
+    		mv.shortcode["file"] = temp["url"];
     		console.log(shortcode["file"]);
     		try{
-			createViewer();
+			mv.createViewer();
 			}
 			catch(err){
 				console.log(err);
@@ -46,14 +42,14 @@ jQuery(function() {
     var i = 0;
     
     jQuery('#shortcode').change(function(){
-    	readShortcode();
+    	mv.readShortcode();
     });
 
     jQuery('.parameter').change(function(){
     	if(jQuery(this).attr("type")=="checkbox"){
-    		shortcode[jQuery(this).attr("id")] = +jQuery(this).is(':checked');
+    		mv.shortcode[jQuery(this).attr("id")] = +jQuery(this).is(':checked');
     	}else{
-    		shortcode[jQuery(this).attr("id")] = jQuery(this).val();
+    		mv.shortcode[jQuery(this).attr("id")] = jQuery(this).val();
     	}
     	
     	console.log(shortcode);
@@ -64,16 +60,17 @@ jQuery(function() {
     	//console.log(i+": ");i++;  
     	//console.log(jQuery(this).attr('rotation'));
     	try{
-    		createViewer();
-    		animate();
+    		mv.createViewer();
+    		mv.animate();
     	}
     	catch(err){
-    		console.log(err);
+    		console.log(err.stack);
     	}
     });
     jQuery('#c_reload').click(function(){
     	try{
-		createViewer();
+		mv.createViewer();
+		//mv.animate();
 		}
 		catch(err){
 			console.log(err);
@@ -81,7 +78,7 @@ jQuery(function() {
 	});
     jQuery('#c_save').click(function(){
     	//createViewer();
-    	filename = jQuery("#filename").val()
+    	mv.filename = jQuery("#filename").val()
     	if(filename){
     		checkFilename(filename);
     	}else{
@@ -92,25 +89,25 @@ jQuery(function() {
     });
     jQuery('.filename').click(function(){
     	jQuery(this).addClass("active");
-    	shortcode["file"]= jQuery(this).text() // 0 = path
+    	mv.shortcode["file"]= jQuery(this).text() // 0 = path
     	console.log(jQuery(this).text());
 		//createShortcode();
-    	tryToCreateViewer(jQuery(this).text());
+    	mc.createViewer();
     	
     });
     jQuery('#colorPicker').change(function(){
     	//console.log(jQuery(this).val());
-    	shortcode["bg_color"] = jQuery(this).val();
+    	mv.shortcode["bg_color"] = jQuery(this).val();
     });
     jQuery('#ground_color').change(function(){
-    	changeGroundColor(new THREE.Color(jQuery(this).val()));
+    	mv.changeGroundColor(new THREE.Color(jQuery(this).val()));
     	
     });
     jQuery('#fix_axis').change(function(){
-    	fixAxis();    	
+    	mv.fixAxis();    	
     });
     jQuery('#cam_rotation_speed').change(function(){
-    	  cameraRotation()
+    	  mv.cameraRotation()
     });    
    // createShortcode();
 
@@ -128,7 +125,7 @@ function initializeShortCode(){
         "cam_rotation_speed":"0",
         "rot_speed_x":"0",
         "rot_speed_y":"0",
-        "rot_speed_z":"0",      
+        "rot_speed_z":"0",   
        		
 
 	}
@@ -421,7 +418,7 @@ function createViewer(){
 
 }
 
-function render() {
+function renderx() {
 	
 
 	controls.update();
@@ -468,7 +465,7 @@ function render() {
 
 }
 
-function animate() {
+function animatex() {
 	stats.begin();
 	
 	render();

@@ -103,9 +103,10 @@ function backendPage(){
     //wp_enqueue_script('threeMTL',plugin_dir_url(__FILE__) ."/js/ThreeJs/examples/js/renderers/Projector.js");
     //wp_enqueue_script('threeMTL',plugin_dir_url(__FILE__) ."/js/ThreeJs/examples/js/renderers/CanvasRenderer.js");
 
-    //wp_enqueue_script("testLight.js",plugin_dir_url(__FILE__) ."/js/testLight.js"); php or die
+    //wp_enqueue_script("testLight.js",plugin_dir_url(__FILE__) ."/js/testLight.js"); php or die cModelViewer.js
     wp_enqueue_script("upload.js",plugin_dir_url(__FILE__) ."/js/upload.js");
-    wp_enqueue_script("modelViewer",plugin_dir_url(__FILE__) ."/js/modelViewer.js");
+    wp_enqueue_script("modelViewer",plugin_dir_url(__FILE__) ."/js/cModelViewer.js");
+    wp_enqueue_script("modelViewe",plugin_dir_url(__FILE__) ."/js/modelViewer.js");
 
     //wp_enqueue_script("sceneReader",plugin_dir_url(__FILE__) ."/js/sceneReader.js");
     wp_localize_script( "modelViewer", 'ajaxUrl', array(
