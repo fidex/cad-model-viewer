@@ -2,6 +2,7 @@ var shortcode = {};
 var container, camera, scene, renderer, mesh, controls, bbox, stats;
 var pos_min, pos_max;
 
+
 //var storage;
 var objects = [];
 jQuery(function() {
@@ -399,7 +400,7 @@ function createViewer(){
 		createGround(bbox);
 		console.log(scene);
 		bbox.name = filepath;
-		bbox.visible = false;
+		///bbox.visible = false;
 		scene.add( bbox );
 
 	});
@@ -442,6 +443,12 @@ function render() {
 		scene.getObjectByName("obj").rotation.x += shortcode["rot_speed_x"]/2000 ;
 		scene.getObjectByName("obj").rotation.y += shortcode["rot_speed_y"]/2000 ;
 		scene.getObjectByName("obj").rotation.z += shortcode["rot_speed_z"]/2000 ;
+		scene.getObjectByName("ground").rotation.x += shortcode["rot_speed_x"]/2000 ;
+		scene.getObjectByName("ground").rotation.y += shortcode["rot_speed_y"]/2000 ;
+		scene.getObjectByName("ground").rotation.z += shortcode["rot_speed_z"]/2000 ;
+		//scene.rotation.x += shortcode["rot_speed_x"]/2000 ;
+		//scene.rotation.y += shortcode["rot_speed_y"]/2000 ;
+		//scene.rotation.z += shortcode["rot_speed_z"]/2000 ;
 		//console.log(scene.getObjectByName("obj").rotation);
 		
 		//eu = new THREE.Euler();
@@ -491,6 +498,8 @@ function zoomCamera(bbox){
 //var distance = Math.abs( Math.max(width,height)  / Math.sin( fov / 2 ) );
 //camera.position.z = distance;
  camera.position.y += center.y;
+ //camera.position.x = 10;
+ console.log(camera);
 
  camera.position.z = (bbox.box.min.y) +Math.abs( Math.max(width,height) / Math.sin( fov / 2 ) );
 
@@ -503,7 +512,11 @@ function createGround(bbox){
 	var widthz =  Math.abs(bbox.box.min.z - bbox.box.max.z);
 	var c = new THREE.Color(shortcode["ground_color"]);
 	var groundMaterial = new THREE.MeshPhongMaterial();
-	var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( widthx, widthz ), groundMaterial );
+	//var mesh = new THREE.Mesh( new THREE.BoxGeometry( widthx *1.2 , widthz *1.2 , 0.1 ), groundMaterial );
+	var mesh = new THREE.Mesh( new THREE.CylinderGeometry( Math.max(widthx,widthz),Math.max(widthx,widthz),0.1,32), groundMaterial );
+	mesh.position.x = bbox.box.min.x + widthx/2;
+	mesh.position.z = bbox.box.min.z + widthz/2;
+
 	mesh.material.color = c;
 	mesh.name="ground";
 
@@ -512,7 +525,7 @@ function createGround(bbox){
 	mesh.position.y = bbox.box.min.y;
 	//mesh.position.x = -widthx*0.05*0.8;
 	//mesh.position.z = -widthz*0.1*0.8;
-	mesh.rotation.x = - Math.PI / 2;
+	//mesh.rotation.x = - Math.PI / 2;
 	mesh.receiveShadow = true;
 	scene.add( mesh );
 	
@@ -531,9 +544,14 @@ function changeGroundVisibility(bool){
 	scene.getObjectByName("ground").visible = bool;
 }
 function fixAxis(){
+	scene.remove(scene.getObjectByName("ground"));
 	ob = scene.getObjectByName("obj");
-	ob.rotation.z = 90 * Math.PI/180;
-	ob.rotation.x = -90 * Math.PI/180;
-	bbox.update;
+	//ob.rotation.z = 90 * Math.PI/180;	
+	ob.rotation.x = -90 * Math.PI/180;	
+	
+	ob.rotation.order = "ZXY";
+	bbox.update();
 	createGround(bbox);
+	zoomCamera(bbox);
+	console.log(ob);
 }
