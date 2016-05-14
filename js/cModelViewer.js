@@ -55,9 +55,9 @@ class ModelViewer {
             this.container.empty();
         }
 
-        this.filepath = ""; // = '/wordpress/wp-content/uploads/';
+        this.filepath = ""; // = '/wordpress/wp-content/uploads/';I:\Bacherlorarbeit\xampp\apps\wordpress\htdocs\wp-content\plugins\cad-model-viewer
         if (this.shortcode["file"] == "samplepath") {
-            this.filepath = '/wordpress/wp-content/uploads/2016/04/Bambo_House.fbx';
+            this.filepath = '/wordpress/wp-content/plugins/cad-model-viewer/R2D2_Standing.fbx';
         } else {
             this.filepath += this.shortcode["file"];
         }
