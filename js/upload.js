@@ -1,6 +1,4 @@
 // comments
-
-
 var data_handle;
 
 jQuery(function() {
@@ -29,7 +27,7 @@ jQuery(function() {
     });
     
     data_handle = jQuery('#dataHandle');
-    jQuery('.upp').click( function(){
+    jQuery('#fileHandler').click( function(){
          media_uploader.open();
          //console.log(data_handle);
     });

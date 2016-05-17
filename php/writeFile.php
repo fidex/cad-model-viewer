@@ -1,6 +1,6 @@
 <?php
 	//$scene = @$_POST['scene']or die("No data!");
-	$basePath = "../../uploads/cad-model-viewer/";
+	$basePath = "../../../uploads/cad-model-viewer/";
 	$filename = $_POST['filename']or die("No data!");;	//unlink("newfile.scene");
 	//unlink("newfile.cam");
 
