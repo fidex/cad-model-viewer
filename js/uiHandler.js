@@ -1,81 +1,50 @@
+var timerStart = Date.now();
 jQuery(function() {
+
+    console.log(ajaxUrl.url);
 
 	stats = new Stats();
 
-	mv = new ModelViewer();
-    mv.initializeShortCode();
-    try{
-            mv.createViewer();
-            mv.animate();
-        }
-        catch(err){
-            console.log(err.stack);
-        }
-
+	mv = new ModelViewer(jQuery(".canvas"));
+    //mv.initializeShortCode();
+    createViewer();    
 	
 	var container = jQuery( '#stats' );
 	console.log(stats.dom);
 	stats.dom.style.top = "150px";
 	stats.dom.style.left = "150px";
-	container.append( stats.dom );
-
-    
-    jQuery('.initParameter').each(function(){
-        if(jQuery(this).attr("type")=="radio"){
-            if(jQuery(this).is(':checked')){
-                mv.init[jQuery(this).attr("name")] = jQuery(this).val();
-            }
-        }else{
-            //console.log(jQuery(this).val());
-            mv.init[jQuery(this).attr("name")] = jQuery(this).val();
-        }
-        
-        console.log(mv.init);
-        //createShortcode();
-    });
-
-	
+	//container.append( stats.dom );	
 
     jQuery('#dataHandle').change(function(){
     	var temp = JSON.parse(jQuery(this).val());
     	if(temp["url"].match(/fbx$/)){
-    		mv.shortcode["fbx_file"] = temp["url"];
-    		console.log(shortcode["fbx_file"]);
+    		mv.init["fbx_file"] = temp["url"];
     		try{
-			mv.createViewer();
+			     mv.createViewer();
 			}
 			catch(err){
 				console.log(err);
 			}
     	}else{
     		alert("Unsuported file format");
-    	}
-    	
-       
-        
-    });
-   
-    var i = 0;
-    
-    jQuery('#shortcode').change(function(){
-    	mv.readShortcode();
-    });
+    	}        
+    });  
 
     jQuery('.parameter').change(function(){
     	if(jQuery(this).attr("type")=="checkbox"){
-    		mv.shortcode[jQuery(this).attr("name")] = +jQuery(this).is(':checked');
+    		mv.init[jQuery(this).attr("name")] = +jQuery(this).is(':checked');
     	}else if(jQuery(this).attr("type")=="radio"){
             if(jQuery(this).is(':checked')){
-                mv.shortcode[jQuery(this).attr("name")] = jQuery(this).val();
+                mv.init[jQuery(this).attr("name")] = jQuery(this).val();
             }
         }
         else{
             //console.log(jQuery(this).val());
-    		mv.shortcode[jQuery(this).attr("name")] = jQuery(this).val();
+    		mv.init[jQuery(this).attr("name")] = jQuery(this).val();
     	}
     	
-    	console.log(mv.shortcode);
-    	//createShortcode();
+    	console.log(mv.init);
+    	
     });    
     jQuery('#c_reload').click(function(){
     	try{
@@ -109,14 +78,13 @@ jQuery(function() {
     });
     jQuery('.filename').click(function(){
     	jQuery(this).addClass("active");
-    	mv.shortcode["file"]= jQuery(this).text() // 0 = path
+    	mv.init["fbx_file"]= jQuery(this).text() // 0 = path
     	console.log(jQuery(this).text());
-		//createShortcode();
-    	mv.createViewer();
+    	createViewer();
     	
     });
     jQuery('#colorPicker').change(function(){
-    	mv.shortcode["bg_color"] = jQuery(this).val();
+    	mv.init["bg_color"] = jQuery(this).val();
     });
     jQuery('#ground_color').change(function(){
     	mv.changeGroundColor(new THREE.Color(jQuery(this).val()));    	
@@ -142,38 +110,50 @@ jQuery(function() {
     jQuery('#ambient_light_intensity').change(function(){
           mv.setAmbientLightIntensity(jQuery(this).val()/200);
     }); 
-   // createShortcode();
+   
 
 });
+function createViewer(){
+    jQuery('.initParameter').each(function(){
+        if(jQuery(this).attr("type")=="radio"){
+            if(jQuery(this).is(':checked')){
+                mv.init[jQuery(this).attr("name")] = jQuery(this).val();
+            }
+        }else{
+            //console.log(jQuery(this).val());
+            mv.init[jQuery(this).attr("name")] = jQuery(this).val();
+        }
+        
+        console.log(mv.init);
+        //createShortcode();
+    });
 
+    try{
+            mv.createViewer();            
+            mv.animate();
+        }
+        catch(err){
+            console.log(err.stack);
+        }
+
+
+}
 function saveFileToServer() {
 
         var t = mv.scene.clone();
         t.remove(t.getObjectByName("obj"));
-
-        var storage = JSON.stringify(t.toJSON());
-        var camstorage = JSON.stringify(mv.camera.toJSON());
         var filename = jQuery("#filename").val();
-
         jQuery.ajax({
             type: 'POST',
-            url: "/wordpress/wp-content/plugins/cad-model-viewer/php/writeFile.php",
+            url: ajaxUrl.url+"php/writeFile.php",
             data: {
                 "filename": filename,
-                "scene": storage,
-                "cam": camstorage
+                "scene": JSON.stringify(t.toJSON()),
+                "cam": JSON.stringify(mv.camera.toJSON()),
             },
-            success: function(msg) {
-                //alert(msg);
-                mv.shortcode["file"] = filename;
+            success: function(msg) {                
+                mv.init["file"] = filename;
                 createShortcode();
-
-            },
-            complete: function() {
-
-            },
-            error: function() {
-
             }
         });
 
@@ -182,10 +162,10 @@ function checkFilename(name) {
         if(name ==""){
             return alert("Please insert a filename");
         }
-
+       
         jQuery.ajax({
             type: 'POST',
-            url: "/wordpress/wp-content/plugins/cad-model-viewer/php/checkFilename.php",
+            url: ajaxUrl.url+"php/checkFilename.php",
             data: {
                 "filename": name
             },
@@ -202,15 +182,17 @@ function checkFilename(name) {
             complete: function(msg) {
 
             },
-            error: function(msg) {}
+            error: function(msg) {
+                console.log(msg);
+            }
         });
 
 }
 function createShortcode() {
 
         var sc = "[cad_modelviewer ";        
-
-        jQuery.each(mv.shortcode, function(key, value) {
+        console.log(mv.getShortcode());
+        jQuery.each(mv.getShortcode(), function(key, value) {
             sc += ' ' + key + '="' + value + '"';
             //console.log(key+" : "+value);
         });

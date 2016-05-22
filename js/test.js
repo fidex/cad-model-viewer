@@ -1,66 +1,122 @@
-// Set up the scene, camera, and renderer as global variables.
-    var scene, camera, renderer;
+var time = performance.now();
+var count = 5;
+var domObject = '<div class="model-viewer-canvas"><script type="json">{"file":"test","fbx_file":"\/wordpress\/wp-content\/plugins\/cad-model-viewer\/files\/R2D2_Standing.fbx","width":"400","height":"400","bg_color":"#ffffff","cam_rotation_speed":"100","rot_speed_x":"0","rot_speed_y":"0","rot_speed_z":"0","material":"phong","material_color":"#ffffff"}</script></div>';
+var stats;
+var result = [];
+var testContainer;
+var container;
+var testfile= "R2D2_Standing";
+var name= "R2D2 nexus4 Chrome";
+var rotation= "1";
+var timeover =false;
+var res= {};
+jQuery(function() {  
+  
+  stats = new Stats();
+  //stats.dom.style.top = "150px";
+  //stats.dom.style.left = "150px";
+  //container.append( stats.dom ); 
+    
+  container = jQuery( '.model-viewer-test-canvas' );
+  testContainer = jQuery( '.test-container' );
+  container.append('<button name="test" value="test" id="testButton">Test</button>');
+  
 
-    init();
-    animate();
-
-    // Sets up the scene.
-    function init() {
-
-      // Create the scene and set the scene size.
-      scene = new THREE.Scene();
-      var WIDTH = window.innerWidth,
-          HEIGHT = window.innerHeight;
-
-      // Create a renderer and add it to the DOM.
-      renderer = new THREE.WebGLRenderer({antialias:true});
-      renderer.setSize(WIDTH, HEIGHT);
-      document.body.appendChild(renderer.domElement);
-
-      // Create a camera, zoom it out from the model a bit, and add it to the scene.
-      camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
-      camera.position.set(0,6,0);
-      scene.add(camera);
-
-      // Create an event listener that resizes the renderer with the browser window.
-      window.addEventListener('resize', function() {
-        var WIDTH = window.innerWidth,
-            HEIGHT = window.innerHeight;
-        renderer.setSize(WIDTH, HEIGHT);
-        camera.aspect = WIDTH / HEIGHT;
-        camera.updateProjectionMatrix();
-      });
-
-      // Set the background color of the scene.
-      renderer.setClearColorHex(0x333F47, 1);
-
-      // Create a light, set its position, and add it to the scene.
-      var light = new THREE.PointLight(0xffffff);
-      light.position.set(-100,200,100);
-      scene.add(light);
-
-      // Load in the mesh and add it to the scene.
-      var loader = new THREE.JSONLoader();
-      loader.load( "treehouse_logo.js", function(geometry){
-        var material = new THREE.MeshLambertMaterial({color: 0x55B663});
-        mesh = new THREE.Mesh(geometry, material);
-        scene.add(mesh);
-      });
-
-      // Add OrbitControls so that we can pan around with the mouse.
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-    }
+  jQuery('#testButton').click(function(){
+    console.log("test starting, lags expected");
+    test();
+  });
 
 
-    // Renders the scene and updates the render as needed.
-    function animate() {
+  // add dom elements
+  
 
-      // Read more about requestAnimationFrame at http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
-      requestAnimationFrame(animate);
-      
-      // Render the scene.
-      renderer.render(scene, camera);
-      controls.update();
+});
+jQuery(window).load(function() {
+  var everythingLoad = performance.now()-time;
+console.log("Time until everything loaded: ", everythingLoad);
+});
+function test(){ 
+  
+  
+    testXObjects(count);   
+    
+  
+
+}
+function testXObjects(x){
+
+  res = {};
+  res["name"] = name;
+  res["file"] = testfile;
+  res["rotation"] = rotation;
+  res["count"] = x;
+  testContainer.empty();
+
+  for(i = 0;i<x;i++){
+    testContainer.append(domObject);
+  }
+
+
+  // start creating 
+  time = performance.now();
+  window.setTimeout(saveHighestFPS,60000);
+  jQuery('.model-viewer-canvas').each(function() {
+        try {
+            sceneReader(jQuery(this));
+        } catch (err) {
+            console.log(err);
+        }
+    });
+
+
+
+  // controll performance
+  (function animat() {
+        
+      if(timeover == false){
+          stats.begin()
+        if(parseInt(stats.getFPS(),10) < 60){
+          //console.log(parseInt(stats.getFPS(),10));
+          requestAnimationFrame(animat);
+          stats.end();
+        }
+        else{
+          //console.log("läuft"+parseInt(stats.getFPS(),10));
+          timeover = true;
+          res["time"]= (performance.now()-time)/1000;
+          console.log("reaching 60 fps after: "+(performance.now()-time)/1000);
+          console.log(res);
+          result.push(res);
+          window.setTimeout(saveToServer(JSON.stringify(res)),10000);
+        }
+      }
+    })();
+
+}
+function saveHighestFPS(){
+  if(!timeover){
+    console.log("over");
+    timeover = true;
+    res["fps"] = parseInt(stats.getFPS(),10);
+    saveToServer(JSON.stringify(res));
+  }
+
+}
+function saveToServer(data) {       
+        
+        jQuery.ajax({
+            type: 'POST',
+            url: baseUrl.url+"php/writeTestFile.php",
+            data: {
+                "data": data,                
+            },
+            success: function(msg) {                
+                console.log("data saved to server");
+            },
+            error: function(){
+                console.log("data save failed");
+            }
+        });
 
     }

@@ -11,8 +11,9 @@ jQuery(function() {
 });
 
 function sceneReader(c) {
+
     console.log("begin creating Scene");
-    var basePath = "wp-content/uploads/cad-model-viewer/";
+    var basePath = baseUrl.url+"/files/scenes/"; //injected from wp
     var container, camera, scene, renderer, mesh, controls;
     //console.log(c.children("script").text());
     var sc = jQuery.parseJSON(c.children("script").text());
@@ -70,11 +71,9 @@ function sceneReader(c) {
 
             scene.add(ob);
             console.log(scene);
-            var d = Math.abs(bbox.box.min.y - bbox.box.max.y); // make this scale with obj size;
-            light.shadow.camera.left = -d;
-            light.shadow.camera.right = d;
-            light.shadow.camera.top = d;
-            light.shadow.camera.bottom = -d;
+            
+
+
             
 
         });
@@ -92,6 +91,7 @@ function sceneReader(c) {
         controls.rotateSpeed = 0.15;
         controls.enableZoom = false;
         controls.autoRotate = true;
+        controls.enableKeys = false;
         controls.autoRotateSpeed = sc["cam_rotation_speed"] / 100;
         //console.log(controls);
 
@@ -121,7 +121,9 @@ function sceneReader(c) {
 
     (function animate() {
         requestAnimationFrame(animate);
+        //stats.begin();
         render();
+        //stats.end();
     })();
 
 }

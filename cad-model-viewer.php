@@ -14,6 +14,11 @@ Shortcodes
 Widget
 template tag
 */
+function activation() {
+    // Activation code here...
+}
+register_activation_hook( __FILE__, 'activation' );
+
 function enqueue_media_uploader()
 {
     wp_enqueue_media();
@@ -21,6 +26,7 @@ function enqueue_media_uploader()
 
 add_action("admin_enqueue_scripts", "enqueue_media_uploader");
 add_shortcode( 'cad_modelviewer', 'modeviewer_shorcode_func' );
+add_shortcode( 'cad_modelviewer_test', 'modeviewer_shorcode_test_func' );
 add_action('admin_menu', 'my_menu');
 
 function my_menu() {
@@ -29,17 +35,21 @@ function my_menu() {
     
 }
 
-
-$count = 0;
-
 function modeviewer_shorcode_func( $atts ){	
+
+ 
+
 	
 	wp_enqueue_script('jQuery');
     wp_enqueue_script('three.js',plugin_dir_url(__FILE__) ."/js/three.js/build/three.min.js");
-    wp_enqueue_script('statsjs',plugin_dir_url(__FILE__) ."/js/stats.js/build/stats.min.js");    
+    wp_enqueue_script('statsjs',plugin_dir_url(__FILE__) ."/js/stats.js/src/stats.js");    
     wp_enqueue_script('threeFBX',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/loaders/FBXLoader.js");   
     wp_enqueue_script('threeOrb',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/controls/OrbitControls.js");    
-    wp_enqueue_script("sceneReader",plugin_dir_url(__FILE__) ."/js/sceneReader.js");    
+    wp_enqueue_script("sceneReader",plugin_dir_url(__FILE__) ."/js/sceneReader.js"); 
+
+    wp_localize_script( "sceneReader", 'baseUrl', array(
+        'url' => ( plugin_dir_url(__FILE__))
+    ));   
 
     $output .= '<div class="model-viewer-canvas">';
     	$output  .='<script type="json">';
@@ -67,19 +77,16 @@ function backendPage(){
     wp_enqueue_script('threeMTLy',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/Detector.js");
     wp_enqueue_script('threeMTLyyxc',plugin_dir_url(__FILE__) ."/js/three.js/src/loaders/ObjectLoader.js");
     wp_enqueue_script('threeMTLyyxcasd',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/loaders/deprecated/SceneLoader.js");
-    //wp_enqueue_script('threeMTL',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/renderers/Projector.js");
-    //wp_enqueue_script('threeMTL',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/renderers/CanvasRenderer.js");
-
-    //wp_enqueue_script("testLight.js",plugin_dir_url(__FILE__) ."/js/testLight.js"); php or die cModelViewer.js
+    
     wp_enqueue_script("upload.js",plugin_dir_url(__FILE__) ."/js/upload.js");
     wp_enqueue_script("modelViewer",plugin_dir_url(__FILE__) ."/js/modelViewer.js");
     wp_enqueue_script("uiHandler",plugin_dir_url(__FILE__) ."/js/uiHandler.js");
 
     //wp_enqueue_script("sceneReader",plugin_dir_url(__FILE__) ."/js/sceneReader.js");
-    wp_localize_script( "modelViewer", 'ajaxUrl', array(
-        'ajax_url' => admin_url( 'writeFile.php' )
+    wp_localize_script( "uiHandler", 'ajaxUrl', array(
+        'url' => ( plugin_dir_url(__FILE__))
     ));
-
+    
 
     /*
 	//echo get_home_path()."<br>";
@@ -117,6 +124,31 @@ function backendPage(){
     */
     readfile(plugin_dir_url(__FILE__) ."/php/modelViewer.php");
 
+}
+function modeviewer_shorcode_test_func( $atts ){  
+
+    
+    wp_enqueue_script('jQuery');
+    wp_enqueue_script('tests',plugin_dir_url(__FILE__) ."/js/test.js");
+    wp_enqueue_script('three.js',plugin_dir_url(__FILE__) ."/js/three.js/build/three.min.js");
+    wp_enqueue_script('statsjs',plugin_dir_url(__FILE__) ."/js/stats.js/src/stats.js");    
+    wp_enqueue_script('threeFBX',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/loaders/FBXLoader.js");   
+    wp_enqueue_script('threeOrb',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/controls/OrbitControls.js");    
+    wp_enqueue_script("sceneReader",plugin_dir_url(__FILE__) ."/js/sceneReader.js"); 
+
+    wp_localize_script( "tests", 'baseUrl', array(
+        'url' => ( plugin_dir_url(__FILE__))
+    ));   
+
+    $output .= '<div class="model-viewer-test-canvas">';
+        $output .= '<div class="test-container">';
+    //    $output  .='<script type="json">';
+    //    $output  .=json_encode($atts);
+    //   $output  .='</script>';
+        $output .='</div>';
+    $output .='</div>';
+
+    return $output;
 }
 
 ?>

@@ -1,0 +1,14 @@
+
+{"fps":26}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":1,"fps":27}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"fps":1}
+{"fps":0}
+{"fps":0}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":2.13741}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":1.3006600000000001}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":6.147850000000002}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":6.034200000000003}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":6.174225000000002}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":8.299295000000003}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":7.630035000000011}
+{"name":"R2D2 nexus4 Chrome","file":"R2D2_Standing","rotation":"1","count":5,"time":13.096115000000001}
