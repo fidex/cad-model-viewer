@@ -12,16 +12,14 @@ jQuery(function() {
 
 function sceneReader(c) {
 
-    console.log("begin creating Scene");
+    
     var basePath = baseUrl.url+"/files/scenes/"; //injected from wp
     var container, camera, scene, renderer, mesh, controls;
     //console.log(c.children("script").text());
     var sc = jQuery.parseJSON(c.children("script").text());
-    //console.log(sc);
-    objects = [],
-
-        CANVAS_WIDTH = sc["width"],
-        CANVAS_HEIGHT = sc["height"];
+    
+    var CANVAS_WIDTH = sc["width"];
+    var CANVAS_HEIGHT = sc["height"];
 
     container = c;
     //console.log("rotation: "+container.attr('rotation'))
@@ -85,6 +83,11 @@ function sceneReader(c) {
 
         //console.log(e);
         camera = e;
+
+        // if widht and height get changed manually fix the aspect
+        camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT; 
+        camera.updateProjectionMatrix();
+
         controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.15;
