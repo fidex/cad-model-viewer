@@ -15,12 +15,13 @@ jQuery(function() {
 	stats.dom.style.left = "150px";
 	//container.append( stats.dom );	
 
+
     jQuery('#dataHandle').change(function(){
     	var temp = JSON.parse(jQuery(this).val());
     	if(temp["url"].match(/fbx$/)){
     		mv.init["fbx_file"] = temp["url"];
     		try{
-			     mv.createViewer();
+			     createViewer();
 			}
 			catch(err){
 				console.log(err);
@@ -77,8 +78,10 @@ jQuery(function() {
 
     });
     jQuery('.filename').click(function(){
+        //console.log(ajaxUrl.url.split("plugins/")[0]+"uploads/");
+
     	jQuery(this).addClass("active");
-    	mv.init["fbx_file"]= jQuery(this).text() // 0 = path
+    	mv.init["fbx_file"]= ajaxUrl.url.split("plugins/")[0]+"uploads/" +jQuery(this).text() // fix path
     	console.log(jQuery(this).text());
     	createViewer();
     	

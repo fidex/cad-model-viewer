@@ -28,7 +28,7 @@ class ModelViewer {
             "light_color":"#ffffff",
             "light_intensity":"1",
             "ambient_light_color":"#404040",
-            "ambient_light_intensity":"0.5",
+            "ambient_light_intensity":"0",
             "ground_color":"#ffffff",
         }
         console.log(this.init);
@@ -99,7 +99,7 @@ class ModelViewer {
         this.scene = new THREE.Scene();
 
         //adding ambient light to the scene
-        var ambiLight = new THREE.AmbientLight(this.init["ambient_light_color"],this.init["ambient_light_intensity"]/100);
+        var ambiLight = new THREE.AmbientLight(this.init["ambient_light_color"],this.init["ambient_light_intensity"]);
         ambiLight.name = "AmbientLight";
         this.scene.add(ambiLight);
 

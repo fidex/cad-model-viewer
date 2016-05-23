@@ -31,4 +31,5 @@ jQuery(function() {
          media_uploader.open();
          //console.log(data_handle);
     });
+    media_uploader.open();
 });

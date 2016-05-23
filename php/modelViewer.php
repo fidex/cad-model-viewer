@@ -39,14 +39,14 @@
             <div class="col-md-6">
                 <h2>Ambient Light</h2>
                 Color:&nbsp;<input type="color" name="ambient_light_color" id="ambient_light_color" value="#ffffff" class="initParameter"/>
-                <input type="range" size="" name="ambient_light_intensity" id="ambient_light_intensity" min="0" max="200" value="100" class="">
+                <input type="range" size="" name="ambient_light_intensity" id="ambient_light_intensity" min="0" max="200" value="0" class="">
             </div>
         </div>
         <hr>
             
    
     <h1>Animations</h1>
-    <h2>Objekt Rotation</h2><button id="reset_rotation">Reset</button><br>
+    <h2>Object Rotation</h2><button id="reset_rotation">Reset</button><br>
     
     Rotation Speed X<input type="range" size="" name="rot_speed_x" id="rot_speed_x" min="0" max="200" value="0" class="parameter">
     Rotation Speed Y<input type="range" size="" name="rot_speed_y" id="rot_speed_y" min="0" max="200" value="0" class="parameter">

@@ -1,45 +1,36 @@
 <?php
 /**
 * Plugin Name: Cad Modell Viewer
-* Plugin URI: http://mypluginuri.com/
-* Description: A brief description about your plugin.
-* Version: 1.0 or whatever version of the plugin (pretty self explanatory)
+* Plugin URI: https://github.com/fidex/cad-model-viewer
+* Description: this plugin allows diplaying of FBX-files inside wordpress pages
+* Version: 1.0 
 * Author: Fide Schuermeyer
 * Author URI: Author's website
-* License: A "Slug" license name e.g. GPL12
+* License: MIT 
 */
-
-/* 
-Shortcodes
-Widget
-template tag
-*/
-function activation() {
-    // Activation code here...
-}
-register_activation_hook( __FILE__, 'activation' );
-
-function enqueue_media_uploader()
-{
-    wp_enqueue_media();
-}
 
 add_action("admin_enqueue_scripts", "enqueue_media_uploader");
 add_shortcode( 'cad_modelviewer', 'modeviewer_shorcode_func' );
 add_shortcode( 'cad_modelviewer_test', 'modeviewer_shorcode_test_func' );
-add_action('admin_menu', 'my_menu');
+add_action('admin_menu', 'create_backend_page');
+register_activation_hook( __FILE__, 'activation' );
 
-function my_menu() {
-    //add_menu_page('My Page Title', 'My Menu Title', 'manage_options', 'my-page-slug', 'my_function');
-    add_object_page( 'modell viewer', 'modell viewer' , 'manage_options', 'modell_viewer', 'backendPage');
-    
+function activation() {
+    // Activation code here...
 }
 
+/*
+enables the access of the wordPress media library through javascript
+*/
+function enqueue_media_uploader()
+{
+    wp_enqueue_media();
+}
+/*
+handels the interpretion of the shortcode cad_modelviewer
+*/
 function modeviewer_shorcode_func( $atts ){	
 
- 
-
-	
 	wp_enqueue_script('jQuery');
     wp_enqueue_script('three.js',plugin_dir_url(__FILE__) ."/js/three.js/build/three.min.js");
     wp_enqueue_script('statsjs',plugin_dir_url(__FILE__) ."/js/stats.js/src/stats.js");    
@@ -59,6 +50,16 @@ function modeviewer_shorcode_func( $atts ){
 
     return $output;
 }
+/*
+    creates a new backend page
+*/
+function create_backend_page() {
+    add_object_page( 'modell viewer', 'modell viewer' , 'manage_options', 'modell_viewer', 'backendPage');
+    
+}
+/*
+    handels the content of the backend page
+*/
 function backendPage(){
 
     wp_enqueue_script('jQuery');
@@ -88,16 +89,19 @@ function backendPage(){
     ));
     
 
-    /*
-	//echo get_home_path()."<br>";
-	$dir    = get_home_path().'wp-content/uploads';
-	$files1 = scandir($dir);
-	//print_r($files1);
+    readfile(plugin_dir_url(__FILE__) ."/php/modelViewer.php");
 
-	$array = array();
+
+    
+    //echo get_home_path()."<br>";
+    $dir    = get_home_path().'wp-content/uploads';
+    $files1 = scandir($dir);
+    //print_r($files1);
+
+    $array = array();
     $files = array();
-	//http://stackoverflow.com/questions/20045622/php-recursivedirectoryiterator
-	foreach ($iterator = new RecursiveIteratorIterator(
+    //http://stackoverflow.com/questions/20045622/php-recursivedirectoryiterator
+    foreach ($iterator = new RecursiveIteratorIterator(
     new RecursiveDirectoryIterator($dir, 
         RecursiveDirectoryIterator::SKIP_DOTS),
     RecursiveIteratorIterator::SELF_FIRST) as $item) {
@@ -117,16 +121,19 @@ function backendPage(){
                 }
             }
     }
-    //foreach ($files as $f) {
-    //    print_r("<li class='filename'>".$f."</li>");
-    //}
+    print_r('<div class="row" hidden><h3>ftp file list</h3><br>select your files here if they were uploaded via ftp<br>');
+    foreach ($files as $f) {
+        print_r("<li class='filename'>".$f."</li>");
+    }
+    print_r('</div>');
     //print_r($files);
-    */
-    readfile(plugin_dir_url(__FILE__) ."/php/modelViewer.php");
+    
 
 }
+/*
+    shortcode used for creating the tests
+*/
 function modeviewer_shorcode_test_func( $atts ){  
-
     
     wp_enqueue_script('jQuery');
     wp_enqueue_script('tests',plugin_dir_url(__FILE__) ."/js/test.js");
@@ -142,9 +149,6 @@ function modeviewer_shorcode_test_func( $atts ){
 
     $output .= '<div class="model-viewer-test-canvas">';
         $output .= '<div class="test-container">';
-    //    $output  .='<script type="json">';
-    //    $output  .=json_encode($atts);
-    //   $output  .='</script>';
         $output .='</div>';
     $output .='</div>';
 
