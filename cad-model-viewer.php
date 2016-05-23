@@ -92,11 +92,10 @@ function backendPage(){
     readfile(plugin_dir_url(__FILE__) ."/php/modelViewer.php");
 
 
-    
+    try {
     //echo get_home_path()."<br>";
     $dir    = get_home_path().'wp-content/uploads';
-    $files1 = scandir($dir);
-    //print_r($files1);
+    
 
     $array = array();
     $files = array();
@@ -126,6 +125,10 @@ function backendPage(){
         print_r("<li class='filename'>".$f."</li>");
     }
     print_r('</div>');
+    
+    } catch (Exception $e) {
+    echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
     //print_r($files);
     
 
