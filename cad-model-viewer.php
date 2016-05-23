@@ -92,6 +92,7 @@ function backendPage(){
     readfile(plugin_dir_url(__FILE__) ."/php/modelViewer.php");
 
 
+    // generates ftp file list. may create errors if the folder does net exist
     try {
     //echo get_home_path()."<br>";
     $dir    = get_home_path().'wp-content/uploads';
@@ -120,14 +121,14 @@ function backendPage(){
                 }
             }
     }
-    print_r('<div class="row" hidden><h3>ftp file list</h3><br>select your files here if they were uploaded via ftp<br>');
+    print_r('<div class="row" ><h3>ftp file list</h3><br>select your files here if they were uploaded via ftp<br><br>');
     foreach ($files as $f) {
         print_r("<li class='filename'>".$f."</li>");
     }
     print_r('</div>');
-    
+
     } catch (Exception $e) {
-    echo 'Caught exception: ',  $e->getMessage(), "\n";
+    //echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
     //print_r($files);
     
