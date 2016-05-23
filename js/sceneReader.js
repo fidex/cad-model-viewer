@@ -1,5 +1,5 @@
 jQuery(function() {
-   
+
     jQuery('.model-viewer-canvas').each(function() {
         try {
             sceneReader(jQuery(this));
@@ -12,12 +12,12 @@ jQuery(function() {
 
 function sceneReader(c) {
 
-    
-    var basePath = baseUrl.url+"/files/scenes/"; //injected from wp
+
+    var basePath = baseUrl.url + "/files/scenes/"; //injected from wp
     var container, camera, scene, renderer, mesh, controls;
     //console.log(c.children("script").text());
     var sc = jQuery.parseJSON(c.children("script").text());
-    
+
     var CANVAS_WIDTH = sc["width"];
     var CANVAS_HEIGHT = sc["height"];
 
@@ -69,10 +69,9 @@ function sceneReader(c) {
 
             scene.add(ob);
             console.log(scene);
-            
 
 
-            
+
 
         });
 
@@ -85,7 +84,7 @@ function sceneReader(c) {
         camera = e;
 
         // if widht and height get changed manually fix the aspect
-        camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT; 
+        camera.aspect = CANVAS_WIDTH / CANVAS_HEIGHT;
         camera.updateProjectionMatrix();
 
         controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -98,7 +97,7 @@ function sceneReader(c) {
         controls.autoRotateSpeed = sc["cam_rotation_speed"] / 100;
         //console.log(controls);
 
-    });    
+    });
 
 
     function render() {

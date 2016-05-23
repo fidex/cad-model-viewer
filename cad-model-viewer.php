@@ -29,9 +29,9 @@ function enqueue_media_uploader()
 /*
 handels the interpretion of the shortcode cad_modelviewer
 */
-function modeviewer_shorcode_func( $atts ){	
+function modeviewer_shorcode_func( $atts ){ 
 
-	wp_enqueue_script('jQuery');
+    wp_enqueue_script('jQuery');
     wp_enqueue_script('three.js',plugin_dir_url(__FILE__) ."/js/three.js/build/three.min.js");
     wp_enqueue_script('statsjs',plugin_dir_url(__FILE__) ."/js/stats.js/src/stats.js");    
     wp_enqueue_script('threeFBX',plugin_dir_url(__FILE__) ."/js/three.js/examples/js/loaders/FBXLoader.js");   
@@ -43,7 +43,7 @@ function modeviewer_shorcode_func( $atts ){
     ));   
 
     $output .= '<div class="model-viewer-canvas">';
-    	$output  .='<script type="json">';
+        $output  .='<script type="json">';
         $output  .=json_encode($atts);
         $output  .='</script>';
     $output .='</div>';
@@ -121,7 +121,7 @@ function backendPage(){
                 }
             }
     }
-    print_r('<div class="row" ><h3>ftp file list</h3><br>select your files here if they were uploaded via ftp<br><br>');
+    print_r('<div class="row" id="ftpList" ><h3>ftp file list</h3><br>select your files here if they were uploaded via ftp<br><br>');
     foreach ($files as $f) {
         print_r("<li class='filename'>".$f."</li>");
     }
@@ -160,4 +160,3 @@ function modeviewer_shorcode_test_func( $atts ){
 }
 
 ?>
-
