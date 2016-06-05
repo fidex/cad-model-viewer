@@ -72,7 +72,7 @@ jQuery(function() {
     jQuery('.filename').click(function() {
         //console.log(ajaxUrl.url.split("plugins/")[0]+"uploads/");
 
-        mv.init["fbx_file"] = ajaxUrl.url.split("plugins/")[0] + "uploads/" + jQuery(this).text() // fix path       
+        mv.init["fbx_file"] = ajaxUrl.url.split("plugins/")[0] + "uploads/" + (decodeURIComponent(jQuery(this).text())).replace(/\\/g, "/"); // fix path       
         createViewer();
 
     });
