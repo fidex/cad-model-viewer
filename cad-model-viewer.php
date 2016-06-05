@@ -15,6 +15,17 @@ add_shortcode( 'cad_modelviewer_test', 'modeviewer_shorcode_test_func' );
 add_action('admin_menu', 'create_backend_page');
 register_activation_hook( __FILE__, 'activation' );
 
+
+// Added to extend allowed files types in Media upload
+add_filter('upload_mimes', 'custom_upload_mimes');
+function custom_upload_mimes ( $existing_mimes=array() ) {
+
+// Add *.EPS files to Media upload
+$existing_mimes['fbx'] = 'application/postscript';
+
+return $existing_mimes;
+}
+
 function activation() {
     // Activation code here...
 }
